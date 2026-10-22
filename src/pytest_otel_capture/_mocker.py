@@ -11,6 +11,8 @@ from ._compat import (
     InMemoryMetricReader,
     InMemorySpanExporter,
     SimpleLogRecordProcessor,
+    drain_logs,
+    drain_spans,
     reset_otel_once,
 )
 from ._helpers import CollectedLog, CollectedMetric, CollectedSpan
@@ -49,18 +51,12 @@ class OTelMocker:
         reset_otel_once()
 
     def get_finished_logs(self) -> list[CollectedLog]:
-        logs = [
-            CollectedLog(record) for record in self._log_exporter.get_finished_logs()
-        ]
-        self._log_exporter.clear()
-        return logs
+        """Drain accepted logs without waiting for active producers to finish."""
+        return [CollectedLog(record) for record in drain_logs(self._log_exporter)]
 
     def get_finished_spans(self) -> list[CollectedSpan]:
-        spans = [
-            CollectedSpan(span) for span in self._span_exporter.get_finished_spans()
-        ]
-        self._span_exporter.clear()
-        return spans
+        """Drain ended, exported spans; active spans belong to a later drain."""
+        return [CollectedSpan(span) for span in drain_spans(self._span_exporter)]
 
     def get_metrics_data(self) -> list[CollectedMetric]:
         metrics: list[CollectedMetric] = []
