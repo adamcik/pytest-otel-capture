@@ -40,6 +40,11 @@ your fixture's `finally` block. Local SDK providers avoid changing the process-g
 providers and keep independent tests isolated.
 
 - `get_finished_spans()` and `get_finished_logs()` drain their exporters.
+  Each drain atomically removes its returned batch. Concurrent emissions fall in
+  that batch or remain for a later drain; a drain does not wait for active spans,
+  batch processors, threads, or async tasks. Do not independently clear or shut down
+  the exporters while capturing. Atomic drains use SDK-private storage and locks,
+  covered by the supported-version tests; custom exporter storage is unsupported.
 - `get_metrics_data()` collects a metric snapshot; it does not clear instruments.
 - `find_spans`, `find_logs`, and `find_metrics` return all matches. Attribute matching
   is a subset match; `scope` matches the instrumentation scope name.
