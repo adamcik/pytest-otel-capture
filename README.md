@@ -65,11 +65,36 @@ providers and keep independent tests isolated.
   records. SDK log IDs are zero when uncorrelated; structural records without
   correlation fields return `None`.
 
-`OTelMocker` retains a legacy context manager that resets the private global
-trace/metric provider-once guards on exit. It does **not** restore or shut down
-providers. The exported `reset_otel_once()` has the same limits. Prefer direct object
-use with local SDK providers; global-provider replacement is unsuitable for concurrent
-tests in one process.
+## Global state and lifecycle
+
+Prefer designing your tests so OpenTelemetry's global state is not a problem, for
+example by injecting local providers. That is not always practical. For those cases,
+`reset_otel_once()` remains a private, test-only escape hatch that **may** enable
+sequential tests to replace global trace/metric providers. `OTelMocker`'s legacy
+context manager calls it on exit; direct object use does not change globals.
+
+This helper only re-arms trace/metric setters. Existing providers remain installed
+until replaced; logging's separate guard is not reset. It does not restore providers,
+rebind cached tracers/meters/loggers, remove handlers or instrumentors, or finish work.
+It deliberately does less than [upstream's internal test resets][upstream-resets],
+which also clear provider references and replace proxies. Neither is a supported
+runtime reset API, and upstream discourages using its test utilities externally.
+
+Your fixture must finish and join telemetry-producing tasks/threads, force-flush any
+application-owned batch processors before final assertions, remove its logging
+handlers, uninstrument its instrumentors, and shut down the providers it owns. Do not
+shut down providers owned by another fixture or the application. Drain before shutdown
+when asserting captured records. Metrics have their own collection timing, below.
+
+An active span can end after a drain and appear in a later drain. A tracer still bound
+to an old local provider sends to that provider, not the next test's capture; shutting
+down that provider early may lose the late emission. Local providers isolate capture
+destinations, not unfinished work or ambient current-span context. Finish work and
+exit span contexts before teardown. Global overrides require sequential tests with
+no surviving producers; xdist separates workers, not tests within a worker. Use fresh
+processes when stronger global-state isolation is required.
+
+[upstream-resets]: https://github.com/open-telemetry/opentelemetry-python/blob/v1.45.1/tests/opentelemetry-test-utils/src/opentelemetry/test/globals_test.py
 
 SDK support is deliberately limited to the tested 1.43 minor series because
 provider-reset and logging support depend on SDK internals. Broaden the range only after
