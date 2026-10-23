@@ -24,7 +24,9 @@ release publication are separate actions.
    Name availability is not a reservation. The first successful trusted upload creates
    the project. No API-token secret is needed.
 5. Run `nix fmt -- --ci`, `nix flake check`, and `nix build`. Inspect wheel and sdist
-   metadata and try the README example against the installed wheel.
+   metadata and try the README example against the installed wheel. `nix flake check`
+   includes all six compatibility checks (Python 3.12–3.14, OTel 1.43/1.44), using
+   installed packages and locked dependencies in the same way locally and in CI.
 6. Choose a version, create its `vVERSION` tag, and publish an approved GitHub release
    for that tag. `release.yml` checks the project, builds and inspects distributions,
    verifies their versions, and publishes through OIDC. The PyPI job does not rebuild

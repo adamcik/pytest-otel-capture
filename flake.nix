@@ -44,28 +44,51 @@
         let
           inherit (pkgs) lib;
           project = "pytest-otel-capture";
-          workspace = uv2nix.lib.workspace.loadWorkspace { workspaceRoot = ./.; };
-          overlay = workspace.mkPyprojectOverlay { sourcePreference = "wheel"; };
+          # New tracked files affect checks unless explicitly excluded here.
+          checkSource = lib.fileset.toSource {
+            root = ./.;
+            fileset = lib.fileset.difference (lib.fileset.gitTracked ./.) (
+              lib.fileset.unions [
+                ./.github
+                ./RELEASING.md
+                ./renovate.json
+                ./flake.nix
+                ./flake.lock
+              ]
+            );
+          };
+          workspace = uv2nix.lib.workspace.loadWorkspace {
+            # Editable overlays require a path, not a source-like set or string.
+            workspaceRoot = /. + builtins.unsafeDiscardStringContext checkSource.outPath;
+          };
+          mkPythonSet =
+            python: group:
+            (pkgs.callPackage pyproject-nix.build.packages { inherit python; }).overrideScope (
+              lib.composeManyExtensions [
+                pyproject-build-systems.overlays.default
+                (workspace.mkPyprojectOverlay {
+                  sourcePreference = "wheel";
+                  # Resolve only one of the lockfile's conflicting SDK groups.
+                  dependencies = {
+                    ${project} = [ group ];
+                  };
+                })
+              ]
+            );
           python = pkgs.python312;
-          baseSet = pkgs.callPackage pyproject-nix.build.packages { inherit python; };
-          pythonSet = baseSet.overrideScope (
-            lib.composeManyExtensions [
-              pyproject-build-systems.overlays.default
-              overlay
-            ]
-          );
+          pythonSet = mkPythonSet python "dev";
           devVenv = pythonSet.mkVirtualEnv "${project}-checks" { ${project} = [ "dev" ]; };
           editableSet = pythonSet.overrideScope (
             workspace.mkEditablePyprojectOverlay { root = "$REPO_ROOT"; }
           );
           editableVenv = editableSet.mkVirtualEnv "${project}-dev" { ${project} = [ "dev" ]; };
           mkCheck =
-            name: body:
+            venv: name: body:
             pkgs.runCommand "${project}-${name}"
               {
-                src = ./.;
+                src = checkSource;
                 nativeBuildInputs = [
-                  devVenv
+                  venv
                   pkgs.uv
                 ];
               }
@@ -74,23 +97,68 @@
                 chmod -R u+w source
                 cd source
                 export HOME="$TMPDIR"
-                export UV_PYTHON="${devVenv}/bin/python"
+                export UV_PYTHON="${venv}/bin/python"
                 export UV_PYTHON_DOWNLOADS=never
                 ${body}
                 touch "$out"
               '';
+          pythonVersions = {
+            python312 = pkgs.python312;
+            python313 = pkgs.python313;
+            python314 = pkgs.python314;
+          };
+          otelVersions = {
+            otel143 = {
+              group = "dev";
+              sdk = "1.43.0";
+              instrumentation = "0.64b0";
+            };
+            otel144 = {
+              group = "otel144";
+              sdk = "1.44.0";
+              instrumentation = "0.65b0";
+            };
+          };
+          compatibilityChecks = lib.concatMapAttrs (
+            pythonName: interpreter:
+            lib.mapAttrs' (
+              otelName: otel:
+              let
+                name = "${pythonName}-${otelName}";
+                packageSet = mkPythonSet interpreter otel.group;
+                venv = packageSet.mkVirtualEnv "${project}-${name}" { ${project} = [ otel.group ]; };
+              in
+              lib.nameValuePair name (
+                mkCheck venv name ''
+                  python - <<'PY'
+                  import importlib.metadata as metadata
+                  import sys
+                  import pytest_otel_capture as capture
+
+                  assert metadata.version("opentelemetry-api") == "${otel.sdk}"
+                  assert metadata.version("opentelemetry-sdk") == "${otel.sdk}"
+                  assert metadata.version("opentelemetry-instrumentation-logging") == "${otel.instrumentation}"
+                  assert sys.version_info[:2] == tuple(map(int, "${interpreter.pythonVersion}".split(".")))
+                  assert "site-packages" in capture.__file__
+                  PY
+                  pytest -q -n 2 -o cache_dir="$TMPDIR/pytest-cache"
+                  basedpyright --pythonpath "${venv}/bin/python"
+                ''
+              )
+            ) otelVersions
+          ) pythonVersions;
         in
         {
           packages.default = pythonSet.${project};
           checks = {
             package = pythonSet.${project};
-            lock = mkCheck "lock" "uv lock --check --offline";
-            tests = mkCheck "tests" ''pytest -q -n 2 -o cache_dir="$TMPDIR/pytest-cache"'';
-            typing = mkCheck "typing" "basedpyright";
+            lock = mkCheck devVenv "lock" "uv lock --check --offline";
+            tests = compatibilityChecks.python312-otel143;
+            typing = mkCheck devVenv "typing" "basedpyright";
             distributions =
               pkgs.runCommand "${project}-distributions"
                 {
-                  src = ./.;
+                  src = checkSource;
                   nativeBuildInputs = [ devVenv ];
                 }
                 ''
@@ -101,7 +169,8 @@
                   python -m build --no-isolation --outdir "$out"
                   twine check "$out"/*
                 '';
-          };
+          }
+          // compatibilityChecks;
           devShells.default = pkgs.mkShell {
             packages = [
               editableVenv

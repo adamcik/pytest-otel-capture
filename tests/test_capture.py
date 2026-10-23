@@ -71,22 +71,20 @@ def test_metric_snapshot_and_data_points(telemetry: Telemetry) -> None:
     assert metric.resource.attributes["service.name"] == "test"
     assert metric.scope.name == "example"
     assert json.loads(str(metric))["name"] == "requests"
-    point = capture.latest_metric_data(data, "requests", metrics.NumberDataPoint)
+    point = capture.get_metric_point(data, "requests")
+    assert isinstance(point, metrics.NumberDataPoint)
     assert point.value == 2
     assert capture.get_metric(data, "missing") is None
     assert capture.find_metrics(data, "requests", attributes={"route": "/other"}) == []
     assert capture.find_metrics(data, "requests", scope="other") == []
-    assert (
-        capture.latest_metric_data(
-            telemetry.capture.get_metrics_data(), "requests", metrics.NumberDataPoint
-        ).value
-        == 2
-    )
+    again = capture.get_metric_point(telemetry.capture.get_metrics_data(), "requests")
+    assert isinstance(again, metrics.NumberDataPoint)
+    assert again.value == 2
     with pytest.raises(ValueError, match="more than one"):
         capture.get_metric([metric, metric], "requests")
-    with pytest.raises(AssertionError):
+    with pytest.warns(DeprecationWarning), pytest.raises(AssertionError):
         capture.latest_metric_data(data, "requests", metrics.HistogramDataPoint)
-    with pytest.raises(AssertionError):
+    with pytest.warns(DeprecationWarning), pytest.raises(AssertionError):
         capture.latest_metric_data(data, "missing", metrics.NumberDataPoint)
 
 
@@ -124,3 +122,6 @@ def test_log_wrapper_accepts_structural_records() -> None:
     assert collected.attributes == {"key": "value"}
     assert collected.body == "hello"
     assert str(collected) == "{}"
+    assert collected.log_data.log_record is Log.log_record
+    assert collected.trace_id is None
+    assert collected.span_id is None
