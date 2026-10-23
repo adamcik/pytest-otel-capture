@@ -44,7 +44,23 @@
         let
           inherit (pkgs) lib;
           project = "pytest-otel-capture";
-          workspace = uv2nix.lib.workspace.loadWorkspace { workspaceRoot = ./.; };
+          # New tracked files affect checks unless explicitly excluded here.
+          checkSource = lib.fileset.toSource {
+            root = ./.;
+            fileset = lib.fileset.difference (lib.fileset.gitTracked ./.) (
+              lib.fileset.unions [
+                ./.github
+                ./RELEASING.md
+                ./renovate.json
+                ./flake.nix
+                ./flake.lock
+              ]
+            );
+          };
+          workspace = uv2nix.lib.workspace.loadWorkspace {
+            # Editable overlays require a path, not a source-like set or string.
+            workspaceRoot = /. + builtins.unsafeDiscardStringContext checkSource.outPath;
+          };
           mkPythonSet =
             python: group:
             (pkgs.callPackage pyproject-nix.build.packages { inherit python; }).overrideScope (
@@ -70,7 +86,7 @@
             venv: name: body:
             pkgs.runCommand "${project}-${name}"
               {
-                src = ./.;
+                src = checkSource;
                 nativeBuildInputs = [
                   venv
                   pkgs.uv
@@ -142,7 +158,7 @@
             distributions =
               pkgs.runCommand "${project}-distributions"
                 {
-                  src = ./.;
+                  src = checkSource;
                   nativeBuildInputs = [ devVenv ];
                 }
                 ''
