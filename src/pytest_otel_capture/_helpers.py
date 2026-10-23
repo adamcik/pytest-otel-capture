@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import warnings
 from collections.abc import Mapping
 from typing import Any, Protocol, TypeVar, assert_never, override
 
@@ -16,6 +17,12 @@ DataPointType = TypeVar(
     bound=metrics.NumberDataPoint
     | metrics.HistogramDataPoint
     | metrics.ExponentialHistogramDataPoint,
+)
+
+type MetricPoint = (
+    metrics.NumberDataPoint
+    | metrics.HistogramDataPoint
+    | metrics.ExponentialHistogramDataPoint
 )
 
 
@@ -200,6 +207,33 @@ def get_metric(
     )
 
 
+def find_metric_points(
+    metrics_data: list[CollectedMetric],
+    metric_name: str,
+    attributes: Mapping[str, Any] | None = None,
+    scope: str | None = None,
+) -> list[MetricPoint]:
+    """Return matching points across metrics, without implying temporal order."""
+    return [
+        point
+        for metric in find_metrics(metrics_data, metric_name, scope=scope)
+        for point in metric.data.data_points
+        if _matches_attributes(point.attributes, attributes)
+    ]
+
+
+def get_metric_point(
+    metrics_data: list[CollectedMetric],
+    metric_name: str,
+    attributes: Mapping[str, Any] | None = None,
+    scope: str | None = None,
+) -> MetricPoint | None:
+    """Return one matching point, None if absent, or raise on ambiguity."""
+    return _one_or_none(
+        find_metric_points(metrics_data, metric_name, attributes, scope), "metric point"
+    )
+
+
 def assert_trace_id(
     collected_span: CollectedSpan, expected_trace_id: int | trace.Span
 ) -> None:
@@ -224,8 +258,15 @@ def latest_metric_data[
     """Return the last point of the selected metric, checking its concrete type.
 
     Attributes select a metric containing a matching point; they do not reorder
-    or filter that metric's data points.
+    or filter that metric's data points. Deprecated: use get_metric_point for
+    unambiguous point selection or find_metric_points for all matching points.
     """
+    warnings.warn(
+        "latest_metric_data is deprecated; use get_metric_point or find_metric_points "
+        "to select data points by attributes",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     metric = get_metric(metrics_data, metric_name, attributes, scope)
     assert metric is not None
     assert metric.data.data_points

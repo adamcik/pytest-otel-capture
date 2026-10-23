@@ -52,6 +52,10 @@ providers and keep independent tests isolated.
   `ValueError` for ambiguous matches.
 - `latest_metric_data` returns the selected metric's last data point and checks its
   type. Attribute filtering selects the metric, not an individual data point.
+  It is deprecated, with its behavior preserved until a future breaking release.
+  Use `get_metric_point` to select the actual point by attributes (`None` for no
+  match, `ValueError` for ambiguity), or `find_metric_points` for all matching
+  points across metrics. Point sequence order does not imply chronological order.
 - `assert_trace_id` and `assert_trace_header` check trace identity. The header helper
   checks only the version/trace-ID prefix, not full W3C header validity.
 
