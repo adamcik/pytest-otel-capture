@@ -126,7 +126,8 @@ part of the behavior under test.
 
 ## Compatibility
 
-CI tests installed wheels on Python 3.12, 3.13, and 3.14 with these exact pairs:
+The flake tests installed packages on Python 3.12, 3.13, and 3.14 with these exact
+pairs:
 
 | OTel API/SDK | Logging instrumentation |
 | ------------ | ----------------------- |
@@ -134,9 +135,10 @@ CI tests installed wheels on Python 3.12, 3.13, and 3.14 with these exact pairs:
 | 1.44.0       | 0.65b0                  |
 
 Runtime dependencies allow the 1.43 and 1.44 minor series. The logging instrumentation
-package is used only in tests; the locked development environment uses the first pair.
-Each matrix job explicitly installs and verifies its SDK versions rather than allowing
-the resolver to substitute another SDK. Other SDK minors, instrumentation combinations,
+package is used only in tests; the development shell uses the first pair. Both pairs are
+pinned in the same lockfile using conflicting dependency groups. Each flake check
+verifies the selected Python, SDK, and instrumentation versions and imports the
+installed package, not the source tree. Other SDK minors, instrumentation combinations,
 free-threaded Python builds, and platforms other than Linux are not covered by this
 matrix. Private exporter storage and reset internals require compatibility testing
 before broadening support. Framework-specific fixtures stay in the application.
@@ -151,6 +153,18 @@ nix fmt
 nix flake check
 nix build
 ```
+
+`nix flake check` runs the full compatibility matrix, including tests, strict typing,
+and distribution-content checks. CI and releases use this same command. To run one
+combination without entering a shell:
+
+```sh
+nix build .#checks.x86_64-linux.python313-otel144
+```
+
+The checks use Nix-built Python interpreters and locked dependencies, without network
+access during test execution or downloading generic Linux Python binaries. `tests`
+remains an alias for the Python 3.12/OTel 1.43 check.
 
 See [RELEASING.md](RELEASING.md) for repository setup and PyPI trusted publishing.
 
