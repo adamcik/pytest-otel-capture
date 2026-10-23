@@ -27,18 +27,32 @@ Repository = "https://github.com/adamcik/pytest-otel-capture"
 
 [dependency-groups]
 dev = [
+  { include-group = "checks" },
+  "opentelemetry-api==1.43.0",
+  "opentelemetry-sdk==1.43.0",
+  "opentelemetry-instrumentation-logging==0.64b0",
+]
+otel144 = [
+  { include-group = "checks" },
+  "opentelemetry-api==1.44.0",
+  "opentelemetry-sdk==1.44.0",
+  "opentelemetry-instrumentation-logging==0.65b0",
+]
+checks = [
   "basedpyright",
   "build",
   "editables",
   "hatch-vcs",
   "hatchling",
   "packaging",
-  "opentelemetry-instrumentation-logging>=0.64b0,<0.65",
   "pytest>=9,<10",
   "pytest-xdist",
   "ruff",
   "twine",
 ]
+
+[tool.uv]
+conflicts = [[{ group = "dev" }, { group = "otel144" }]]
 
 [build-system]
 requires = ["editables>=0.6,<0.7", "hatch-vcs>=0.5,<0.6", "hatchling>=1.30.1,<2"]
