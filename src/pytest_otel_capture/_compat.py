@@ -26,9 +26,17 @@ __all__ = [
 def reset_otel_once() -> None:
     """Permit replacing global trace/metric providers; not a provider teardown.
 
-    This compatibility helper uses SDK internals. Prefer local SDK providers in
-    new tests. Callers own shutting down old providers and replacing them before
-    creating instruments; concurrent use in one process is unsupported.
+    Prefer tests that do not need to replace globals. When that is impractical,
+    this private, test-only escape hatch may enable sequential replacement.
+    It leaves current providers installed and excludes the logging guard.
+    Callers own shutdown, instrumentor/handler removal, and finishing background
+    work. Previously acquired tracers, meters, and loggers may remain bound to
+    old providers; concurrent use in one process is unsupported.
+
+    Compare upstream's broader test-only reset (provider, proxy, and guard):
+    https://github.com/open-telemetry/opentelemetry-python/blob/v1.45.1/tests/opentelemetry-test-utils/src/opentelemetry/test/globals_test.py
+    Their utilities disclaim external support; this helper intentionally only
+    re-arms the trace/metric guards rather than clearing or restoring globals.
     """
     opentelemetry.trace._TRACER_PROVIDER_SET_ONCE = Once()  # pyright: ignore[reportPrivateUsage]
     opentelemetry.metrics._internal._METER_PROVIDER_SET_ONCE = Once()  # pyright: ignore[reportPrivateUsage]
