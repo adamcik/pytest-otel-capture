@@ -1,7 +1,7 @@
 # pytest-otel-capture
 
-Capture and inspect OpenTelemetry logs, spans, and metrics in Python tests. Requires
-Python 3.12 or newer.
+Capture and inspect OpenTelemetry logs, spans, and metrics in Python tests with less
+selector and inspection boilerplate. Requires Python 3.12 or newer.
 
 ```sh
 pip install pytest-otel-capture
@@ -30,14 +30,27 @@ try:
     assert span.scope.name == "example"
 finally:
     provider.shutdown()
+    collected.log_processor.shutdown()
+    collected.metric_reader.shutdown()
 ```
+
+This captures telemetry accepted by a local SDK exporter/reader. It does **not** prove
+what a collector or remote backend receives: batching, OTLP serialization, collector
+transforms, and remote delivery need their own integration tests. Compared with direct
+SDK in-memory exporters/readers, this package adds atomic span/log drains, wrappers, and
+selectors—not provider configuration, instrumentation, or lifecycle management.
+
+See [behavioral test examples](docs/behavioral-tests.md) for an application-owned
+fixture, capture downstream of an application processor, and non-vacuous
+sensitive-marker checks.
 
 ## Capture ownership and selectors
 
 Inject `span_processor` into a `TracerProvider`, `log_processor` into a
 `LoggerProvider`, and `metric_reader` into a `MeterProvider`. Shut down each provider in
 your fixture's `finally` block. Local SDK providers avoid changing the process-global
-providers and keep independent tests isolated.
+providers and separate capture destinations; they do not finish application work or
+remove other process-global state.
 
 - `get_finished_spans()` and `get_finished_logs()` drain their exporters. Each drain
   atomically removes its returned batch. Concurrent emissions fall in that batch or
@@ -94,6 +107,22 @@ surviving producers; xdist separates workers, not tests within a worker. Use fre
 processes when stronger global-state isolation is required.
 
 [upstream-resets]: https://github.com/open-telemetry/opentelemetry-python/blob/v1.45.1/tests/opentelemetry-test-utils/src/opentelemetry/test/globals_test.py
+
+## Metric snapshots
+
+`get_metrics_data()` asks the reader to collect now, including invoking observable
+instrument callbacks. It is not a drain: instruments remain registered and callbacks run
+again on subsequent collections. Ensure application updates have finished before
+collecting, and use deterministic callbacks in tests.
+
+The default reader reports cumulative counter values; a reader configured for delta
+temporality reports changes since its previous collection. Histograms expose aggregated
+counts, sums, and buckets, not individual measurements. Multiple attribute sets produce
+multiple points, not successive versions of one point. Inspect the SDK point type and
+attributes; use `get_metric_point` only when exactly one point should match, and
+`find_metric_points` or `metric.data.data_points` when all points matter. Inspect SDK
+aggregation temporality and configure reader preferences/views explicitly when those are
+part of the behavior under test.
 
 ## Compatibility
 
