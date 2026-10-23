@@ -58,6 +58,12 @@ providers and keep independent tests isolated.
   points across metrics. Point sequence order does not imply chronological order.
 - `assert_trace_id` and `assert_trace_header` check trace identity. The header helper
   checks only the version/trace-ID prefix, not full W3C header validity.
+  Neither helper proves propagation or parentage. For relationships, inspect
+  `parent_span_id`, `links`, and log `trace_id`/`span_id`. Events include SDK
+  exception attributes. `readable_span`, `log_data`, and metric `metric` retain
+  access to underlying SDK data; `log_data` is untyped to also accept structural
+  records. SDK log IDs are zero when uncorrelated; structural records without
+  correlation fields return `None`.
 
 `OTelMocker` retains a legacy context manager that resets the private global
 trace/metric provider-once guards on exit. It does **not** restore or shut down
