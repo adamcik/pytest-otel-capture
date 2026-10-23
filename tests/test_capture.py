@@ -122,3 +122,6 @@ def test_log_wrapper_accepts_structural_records() -> None:
     assert collected.attributes == {"key": "value"}
     assert collected.body == "hello"
     assert str(collected) == "{}"
+    assert collected.log_data.log_record is Log.log_record
+    assert collected.trace_id is None
+    assert collected.span_id is None
