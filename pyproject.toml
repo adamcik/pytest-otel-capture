@@ -16,7 +16,7 @@ classifiers = [
   "Typing :: Typed",
 ]
 dynamic = ["version"]
-dependencies = ["opentelemetry-api>=1.43,<1.44", "opentelemetry-sdk>=1.43,<1.44"]
+dependencies = ["opentelemetry-api>=1.43,<2", "opentelemetry-sdk>=1.43,<2"]
 
 [project.urls]
 Homepage = "https://github.com/adamcik/pytest-otel-capture"
