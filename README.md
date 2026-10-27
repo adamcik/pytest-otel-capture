@@ -56,10 +56,10 @@ providers. The exported `reset_otel_once()` has the same limits. Prefer direct o
 use with local SDK providers; global-provider replacement is unsuitable for concurrent
 tests in one process.
 
-SDK support is deliberately limited to the tested 1.43 minor series because
-provider-reset and logging support depend on SDK internals. Broaden the range only after
-compatibility testing. Framework-specific pytest fixtures stay in the application that
-owns their settings and instrumentation.
+Supported API and SDK versions are `>=1.43,<2`. The SDK selects its matching API;
+restricting either package to a single minor release can block compatible security
+updates. Provider-reset and logging support depend on SDK internals. Framework-specific
+pytest fixtures stay in the application that owns their settings and instrumentation.
 
 ## Development
 

@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.12"
 
 [[package]]
@@ -625,8 +625,8 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "opentelemetry-api", specifier = ">=1.43,<1.44" },
-    { name = "opentelemetry-sdk", specifier = ">=1.43,<1.44" },
+    { name = "opentelemetry-api", specifier = ">=1.43,<2" },
+    { name = "opentelemetry-sdk", specifier = ">=1.43,<2" },
 ]
 
 [package.metadata.requires-dev]
