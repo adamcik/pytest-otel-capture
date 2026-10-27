@@ -1,4 +1,15 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>adamcik/renovate-config:library"]
+  "extends": ["github>adamcik/renovate-config:library"],
+  "packageRules": [
+    {
+      "description": [
+        "The SDK pins the API exactly; keep routine updates on the same branch."
+      ],
+      "matchDatasources": ["pypi"],
+      "matchPackageNames": ["opentelemetry-api", "opentelemetry-sdk"],
+      "groupName": "OpenTelemetry",
+      "groupSlug": "opentelemetry"
+    }
+  ]
 }
