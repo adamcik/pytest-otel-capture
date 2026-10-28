@@ -25,6 +25,6 @@ jobs:
       - run: nix fmt -- --ci
       - run: nix flake check
       - name: Inspect release distributions
-        uses: hynek/build-and-inspect-python-package@8219e97fa5848d0e0fb514054f36a08467416828 # main
+        uses: hynek/build-and-inspect-python-package@a75f00e4b4f7a8b6376eb3170c98e0bfb5dfeb93 # main
         with:
           python-version: "3.12"
