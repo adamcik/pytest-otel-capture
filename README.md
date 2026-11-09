@@ -133,15 +133,17 @@ pairs:
 | ------------ | ----------------------- |
 | 1.43.0       | 0.64b0                  |
 | 1.44.0       | 0.65b0                  |
+| 1.45.2       | 0.66b2                  |
 
-Runtime dependencies allow the 1.43 and 1.44 minor series. The logging instrumentation
-package is used only in tests; the development shell uses the first pair. Both pairs are
+Runtime dependencies allow `>=1.43,<2` so consumers can install compatible security
+updates, including 1.45.1. The SDK selects its matching API. The logging instrumentation
+package is used only in tests; the development shell uses the first pair. All pairs are
 pinned in the same lockfile using conflicting dependency groups. Each flake check
 verifies the selected Python, SDK, and instrumentation versions and imports the
 installed package, not the source tree. Other SDK minors, instrumentation combinations,
 free-threaded Python builds, and platforms other than Linux are not covered by this
-matrix. Private exporter storage and reset internals require compatibility testing
-before broadening support. Framework-specific fixtures stay in the application.
+matrix. Private exporter storage and reset internals require compatibility testing as
+new versions are adopted. Framework-specific fixtures stay in the application.
 
 ## Development
 

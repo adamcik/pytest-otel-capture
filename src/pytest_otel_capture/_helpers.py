@@ -4,20 +4,13 @@ from __future__ import annotations
 
 import warnings
 from collections.abc import Mapping
-from typing import Any, Protocol, TypeVar, assert_never, override
+from typing import Any, Protocol, assert_never, override
 
 from opentelemetry import trace
 from opentelemetry.sdk.metrics import export as metrics
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import Event, ReadableSpan
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
-
-DataPointType = TypeVar(
-    "DataPointType",
-    bound=metrics.NumberDataPoint
-    | metrics.HistogramDataPoint
-    | metrics.ExponentialHistogramDataPoint,
-)
 
 type MetricPoint = (
     metrics.NumberDataPoint
@@ -278,11 +271,7 @@ def assert_trace_header(header: str, expected_trace: int | trace.Span) -> None:
     assert header.startswith(f"00-{_extract_trace_id(expected_trace):032x}-")
 
 
-def latest_metric_data[
-    DataPointType: metrics.NumberDataPoint
-    | metrics.HistogramDataPoint
-    | metrics.ExponentialHistogramDataPoint
-](
+def latest_metric_data[DataPointType: MetricPoint](
     metrics_data: list[CollectedMetric],
     metric_name: str,
     data_point_type: type[DataPointType],

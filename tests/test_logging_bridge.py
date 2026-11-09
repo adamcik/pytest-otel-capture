@@ -1,14 +1,11 @@
 import logging
 
-import pytest
 from conftest import Telemetry
+from opentelemetry.instrumentation import logging as instrumentation
+from opentelemetry.instrumentation.logging import handler as handler_module
 
 
 def test_stdlib_logging_requires_an_explicit_bridge(telemetry: Telemetry) -> None:
-    instrumentation = pytest.importorskip("opentelemetry.instrumentation.logging")
-    handler_module = pytest.importorskip(
-        "opentelemetry.instrumentation.logging.handler"
-    )
     logger = logging.Logger("application", level=logging.INFO)
     logger.propagate = False
     null_handler = logging.NullHandler()
