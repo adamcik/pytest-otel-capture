@@ -47,8 +47,11 @@ def test_built_distributions_contain_metadata_types_and_license(tmp_path: Path) 
     }
     assert set(requirements) == {"opentelemetry-api", "opentelemetry-sdk"}
     for versions in requirements.values():
-        assert "1.43.0" in versions and "1.44.0" in versions
-        assert "1.42.0" not in versions and "1.45.0" not in versions
+        assert all(
+            version in versions
+            for version in ("1.43.0", "1.44.0", "1.45.1", "1.45.2", "1.99.0")
+        )
+        assert "1.42.0" not in versions and "2.0.0" not in versions
     with tarfile.open(sdist_path) as sdist:
         members = {
             member.name.split("/", 1)[1]: member for member in sdist.getmembers()

@@ -118,6 +118,11 @@
               sdk = "1.44.0";
               instrumentation = "0.65b0";
             };
+            otel145 = {
+              group = "otel145";
+              sdk = "1.45.2";
+              instrumentation = "0.66b2";
+            };
           };
           compatibilityChecks = lib.concatMapAttrs (
             pythonName: interpreter:
