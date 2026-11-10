@@ -107,23 +107,22 @@
             python313 = pkgs.python313;
             python314 = pkgs.python314;
           };
-          otelVersions = {
-            otel143 = {
-              group = "dev";
-              sdk = "1.43.0";
-              instrumentation = "0.64b0";
-            };
-            otel144 = {
-              group = "otel144";
-              sdk = "1.44.0";
-              instrumentation = "0.65b0";
-            };
-            otel145 = {
-              group = "otel145";
-              sdk = "1.45.2";
-              instrumentation = "0.66b2";
-            };
-          };
+          dependencyGroups = (builtins.fromTOML (builtins.readFile ./pyproject.toml)).dependency-groups;
+          # Read expectations from the same pins Renovate updates, not a second version list.
+          pinnedVersion =
+            group: package:
+            let
+              prefix = "${package}==";
+              dependency = lib.findFirst (
+                dep: builtins.isString dep && lib.hasPrefix prefix dep
+              ) (throw "Missing ${package} pin in ${group}") dependencyGroups.${group};
+            in
+            lib.removePrefix prefix dependency;
+          otelVersions = lib.genAttrs [ "otel-minimum" "otel143" "otel144" "otel145" ] (group: {
+            inherit group;
+            sdk = pinnedVersion group "opentelemetry-sdk";
+            instrumentation = pinnedVersion group "opentelemetry-instrumentation-logging";
+          });
           compatibilityChecks = lib.concatMapAttrs (
             pythonName: interpreter:
             lib.mapAttrs' (
@@ -158,7 +157,7 @@
           checks = {
             package = pythonSet.${project};
             lock = mkCheck devVenv "lock" "uv lock --check --offline";
-            tests = compatibilityChecks.python312-otel143;
+            tests = compatibilityChecks.python312-otel-minimum;
             typing = mkCheck devVenv "typing" "basedpyright";
             distributions =
               pkgs.runCommand "${project}-distributions"

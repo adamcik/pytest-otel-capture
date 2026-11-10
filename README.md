@@ -126,18 +126,29 @@ part of the behavior under test.
 
 ## Compatibility
 
-The flake tests installed packages on Python 3.12, 3.13, and 3.14 with these exact
-pairs:
+The flake tests installed packages on Python 3.12, 3.13, and 3.14 against the latest
+patch of each supported OpenTelemetry minor. Exact pins live in the `otel143`,
+`otel144`, and `otel145` dependency groups in `pyproject.toml`:
 
 | OTel API/SDK | Logging instrumentation |
 | ------------ | ----------------------- |
-| 1.43.0       | 0.64b0                  |
-| 1.44.0       | 0.65b0                  |
-| 1.45.2       | 0.66b2                  |
+| 1.43.x       | 0.64bN                  |
+| 1.44.x       | 0.65bN                  |
+| 1.45.x       | 0.66bN                  |
+
+A separate minimum-version lane stays on API/SDK 1.43.0 and logging instrumentation
+0.64b0 across the same Python versions. Renovate groups each minor's API, SDK, and
+logging instrumentation updates and keeps them within that lane. New minors need an
+explicit matrix addition; existing lanes do not silently move to them. The minimum lane
+does not receive dependency updates.
 
 Runtime dependencies allow `>=1.43,<2` so consumers can install compatible security
 updates, including 1.45.1. The SDK selects its matching API. The logging instrumentation
-package is used only in tests; the development shell uses the first pair. All pairs are
+package is used only in tests; the development shell uses the patched 1.45 lane. The
+older pairs remain for compatibility testing, not as recommended versions. API versions
+before 1.45.1 are affected by the `tracestate` parsing vulnerability
+([GHSA-xcq7-p3pf-p88h](https://github.com/advisories/GHSA-xcq7-p3pf-p88h)); passing
+compatibility tests does not make those versions security-recommended. All pairs are
 pinned in the same lockfile using conflicting dependency groups. Each flake check
 verifies the selected Python, SDK, and instrumentation versions and imports the
 installed package, not the source tree. Other SDK minors, instrumentation combinations,
@@ -166,7 +177,7 @@ nix build .#checks.x86_64-linux.python313-otel144
 
 The checks use Nix-built Python interpreters and locked dependencies, without network
 access during test execution or downloading generic Linux Python binaries. `tests`
-remains an alias for the Python 3.12/OTel 1.43 check.
+remains an alias for the Python 3.12/minimum-version check (`python312-otel-minimum`).
 
 See [RELEASING.md](RELEASING.md) for repository setup and PyPI trusted publishing.
 
