@@ -2,9 +2,15 @@ version = 1
 revision = 5
 requires-python = ">=3.12"
 conflicts = [[
-    { package = "pytest-otel-capture", group = "dev" },
+    { package = "pytest-otel-capture", group = "otel-minimum" },
+    { package = "pytest-otel-capture", group = "otel143" },
     { package = "pytest-otel-capture", group = "otel144" },
     { package = "pytest-otel-capture", group = "otel145" },
+], [
+    { package = "pytest-otel-capture", group = "dev" },
+    { package = "pytest-otel-capture", group = "otel-minimum" },
+    { package = "pytest-otel-capture", group = "otel143" },
+    { package = "pytest-otel-capture", group = "otel144" },
 ]]
 
 [[package]]
@@ -502,7 +508,7 @@ name = "opentelemetry-api"
 version = "1.43.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "extra == 'group-19-pytest-otel-capture-dev' or (extra == 'group-19-pytest-otel-capture-otel144' and extra == 'group-19-pytest-otel-capture-otel145')" },
+    { name = "typing-extensions", marker = "extra == 'group-19-pytest-otel-capture-otel-minimum' or extra == 'group-19-pytest-otel-capture-otel143' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel144') or (extra == 'group-19-pytest-otel-capture-otel144' and extra == 'group-19-pytest-otel-capture-otel145')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/ae/cc/e4c9584181f86494df0f6bdec1a4f3280c50db44704dc2a407e994fc87bb/opentelemetry_api-1.43.0.tar.gz", hash = "sha256:107d0d03857ea8fc7c5fcbbbd83f800c281f0d560553d61c1d675fccfd1761c1", size = 73476, upload-time = "2026-06-24T15:19:55.323Z" }
 wheels = [
@@ -514,7 +520,7 @@ name = "opentelemetry-api"
 version = "1.44.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "extra == 'group-19-pytest-otel-capture-otel144' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel145')" },
+    { name = "typing-extensions", marker = "extra == 'group-19-pytest-otel-capture-otel144' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel-minimum') or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel143') or (extra == 'group-19-pytest-otel-capture-otel-minimum' and extra == 'group-19-pytest-otel-capture-otel143') or (extra == 'group-19-pytest-otel-capture-otel-minimum' and extra == 'group-19-pytest-otel-capture-otel145') or (extra == 'group-19-pytest-otel-capture-otel143' and extra == 'group-19-pytest-otel-capture-otel145')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/ee/8b/aa9e2d8b8dfa7c946f7dec5d1f8f6ba8eca062f43509a06bdb5ce93d26c0/opentelemetry_api-1.44.0.tar.gz", hash = "sha256:67647e5e9566edcf421166fdf022b3537f818635daa852b289e34604dc6fb33a", size = 72406, upload-time = "2026-07-16T15:25:32.678Z" }
 wheels = [
@@ -625,9 +631,9 @@ name = "opentelemetry-sdk"
 version = "1.43.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "opentelemetry-api", version = "1.43.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-dev' or (extra == 'group-19-pytest-otel-capture-otel144' and extra == 'group-19-pytest-otel-capture-otel145')" },
-    { name = "opentelemetry-semantic-conventions", version = "0.64b0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-dev' or (extra == 'group-19-pytest-otel-capture-otel144' and extra == 'group-19-pytest-otel-capture-otel145')" },
-    { name = "typing-extensions", marker = "extra == 'group-19-pytest-otel-capture-dev' or (extra == 'group-19-pytest-otel-capture-otel144' and extra == 'group-19-pytest-otel-capture-otel145')" },
+    { name = "opentelemetry-api", version = "1.43.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-otel-minimum' or extra == 'group-19-pytest-otel-capture-otel143' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel144') or (extra == 'group-19-pytest-otel-capture-otel144' and extra == 'group-19-pytest-otel-capture-otel145')" },
+    { name = "opentelemetry-semantic-conventions", version = "0.64b0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-otel-minimum' or extra == 'group-19-pytest-otel-capture-otel143' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel144') or (extra == 'group-19-pytest-otel-capture-otel144' and extra == 'group-19-pytest-otel-capture-otel145')" },
+    { name = "typing-extensions", marker = "extra == 'group-19-pytest-otel-capture-otel-minimum' or extra == 'group-19-pytest-otel-capture-otel143' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel144') or (extra == 'group-19-pytest-otel-capture-otel144' and extra == 'group-19-pytest-otel-capture-otel145')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/3e/eb/5041074274ac0956b03637cc039d434569112468e875eddfcc9a0674ce06/opentelemetry_sdk-1.43.0.tar.gz", hash = "sha256:d8187c81c162df9913e4003dd6485f7390d9a24fc17026ec7387b8b8218b08e9", size = 254744, upload-time = "2026-06-24T15:20:08.467Z" }
 wheels = [
@@ -639,9 +645,9 @@ name = "opentelemetry-sdk"
 version = "1.44.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "opentelemetry-api", version = "1.44.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-otel144' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel145')" },
-    { name = "opentelemetry-semantic-conventions", version = "0.65b0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-otel144' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel145')" },
-    { name = "typing-extensions", marker = "extra == 'group-19-pytest-otel-capture-otel144' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel145')" },
+    { name = "opentelemetry-api", version = "1.44.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-otel144' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel-minimum') or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel143') or (extra == 'group-19-pytest-otel-capture-otel-minimum' and extra == 'group-19-pytest-otel-capture-otel143') or (extra == 'group-19-pytest-otel-capture-otel-minimum' and extra == 'group-19-pytest-otel-capture-otel145') or (extra == 'group-19-pytest-otel-capture-otel143' and extra == 'group-19-pytest-otel-capture-otel145')" },
+    { name = "opentelemetry-semantic-conventions", version = "0.65b0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-otel144' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel-minimum') or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel143') or (extra == 'group-19-pytest-otel-capture-otel-minimum' and extra == 'group-19-pytest-otel-capture-otel143') or (extra == 'group-19-pytest-otel-capture-otel-minimum' and extra == 'group-19-pytest-otel-capture-otel145') or (extra == 'group-19-pytest-otel-capture-otel143' and extra == 'group-19-pytest-otel-capture-otel145')" },
+    { name = "typing-extensions", marker = "extra == 'group-19-pytest-otel-capture-otel144' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel-minimum') or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel143') or (extra == 'group-19-pytest-otel-capture-otel-minimum' and extra == 'group-19-pytest-otel-capture-otel143') or (extra == 'group-19-pytest-otel-capture-otel-minimum' and extra == 'group-19-pytest-otel-capture-otel145') or (extra == 'group-19-pytest-otel-capture-otel143' and extra == 'group-19-pytest-otel-capture-otel145')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/5d/77/a6592cbc7c8d9bcc9d6757a9df45e04a7c585e3e6e7a13456da522b21109/opentelemetry_sdk-1.44.0.tar.gz", hash = "sha256:cebe7f65dc12f26ead75c6064de12fd2a9052e5060c0272d402cfa203aae123b", size = 208624, upload-time = "2026-07-16T15:25:46.078Z" }
 wheels = [
@@ -667,8 +673,8 @@ name = "opentelemetry-semantic-conventions"
 version = "0.64b0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "opentelemetry-api", version = "1.43.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-dev' or (extra == 'group-19-pytest-otel-capture-otel144' and extra == 'group-19-pytest-otel-capture-otel145')" },
-    { name = "typing-extensions", marker = "extra == 'group-19-pytest-otel-capture-dev' or (extra == 'group-19-pytest-otel-capture-otel144' and extra == 'group-19-pytest-otel-capture-otel145')" },
+    { name = "opentelemetry-api", version = "1.43.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-otel-minimum' or extra == 'group-19-pytest-otel-capture-otel143' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel144') or (extra == 'group-19-pytest-otel-capture-otel144' and extra == 'group-19-pytest-otel-capture-otel145')" },
+    { name = "typing-extensions", marker = "extra == 'group-19-pytest-otel-capture-otel-minimum' or extra == 'group-19-pytest-otel-capture-otel143' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel144') or (extra == 'group-19-pytest-otel-capture-otel144' and extra == 'group-19-pytest-otel-capture-otel145')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/5a/30/5f26df29509eccd86b99b481ac9ffa39da49ba9577cc69071c552ae30447/opentelemetry_semantic_conventions-0.64b0.tar.gz", hash = "sha256:72f76fb2d1582d9d033dd1fcd84532e961e6ff3d90d24ba6fabc72975a83864c", size = 148340, upload-time = "2026-06-24T15:20:09.267Z" }
 wheels = [
@@ -680,8 +686,8 @@ name = "opentelemetry-semantic-conventions"
 version = "0.65b0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "opentelemetry-api", version = "1.44.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-otel144' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel145')" },
-    { name = "typing-extensions", marker = "extra == 'group-19-pytest-otel-capture-otel144' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel145')" },
+    { name = "opentelemetry-api", version = "1.44.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-otel144' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel-minimum') or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel143') or (extra == 'group-19-pytest-otel-capture-otel-minimum' and extra == 'group-19-pytest-otel-capture-otel143') or (extra == 'group-19-pytest-otel-capture-otel-minimum' and extra == 'group-19-pytest-otel-capture-otel145') or (extra == 'group-19-pytest-otel-capture-otel143' and extra == 'group-19-pytest-otel-capture-otel145')" },
+    { name = "typing-extensions", marker = "extra == 'group-19-pytest-otel-capture-otel144' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel-minimum') or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel143') or (extra == 'group-19-pytest-otel-capture-otel-minimum' and extra == 'group-19-pytest-otel-capture-otel143') or (extra == 'group-19-pytest-otel-capture-otel-minimum' and extra == 'group-19-pytest-otel-capture-otel145') or (extra == 'group-19-pytest-otel-capture-otel143' and extra == 'group-19-pytest-otel-capture-otel145')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/8f/73/0cbdebcb4cf545fdd328da14f5137e37d0770c3f26185e478b0d15d94f50/opentelemetry_semantic_conventions-0.65b0.tar.gz", hash = "sha256:f9b2b81e9d5b64f11bc952075e7e9c7fb0aab075c7fd1c46d597f1b919852d60", size = 148774, upload-time = "2026-07-16T15:25:46.902Z" }
 wheels = [
@@ -775,12 +781,12 @@ wheels = [
 name = "pytest-otel-capture"
 source = { editable = "." }
 dependencies = [
-    { name = "opentelemetry-api", version = "1.43.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-dev' or (extra == 'group-19-pytest-otel-capture-otel144' and extra == 'group-19-pytest-otel-capture-otel145')" },
-    { name = "opentelemetry-api", version = "1.44.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-otel144' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel145')" },
-    { name = "opentelemetry-api", version = "1.45.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-otel145' or (extra != 'group-19-pytest-otel-capture-dev' and extra != 'group-19-pytest-otel-capture-otel144') or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel144')" },
-    { name = "opentelemetry-sdk", version = "1.43.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-dev' or (extra == 'group-19-pytest-otel-capture-otel144' and extra == 'group-19-pytest-otel-capture-otel145')" },
-    { name = "opentelemetry-sdk", version = "1.44.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-otel144' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel145')" },
-    { name = "opentelemetry-sdk", version = "1.45.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-otel145' or (extra != 'group-19-pytest-otel-capture-dev' and extra != 'group-19-pytest-otel-capture-otel144') or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel144')" },
+    { name = "opentelemetry-api", version = "1.43.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-otel-minimum' or extra == 'group-19-pytest-otel-capture-otel143' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel144') or (extra == 'group-19-pytest-otel-capture-otel144' and extra == 'group-19-pytest-otel-capture-otel145')" },
+    { name = "opentelemetry-api", version = "1.44.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-otel144' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel-minimum') or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel143') or (extra == 'group-19-pytest-otel-capture-otel-minimum' and extra == 'group-19-pytest-otel-capture-otel143') or (extra == 'group-19-pytest-otel-capture-otel-minimum' and extra == 'group-19-pytest-otel-capture-otel145') or (extra == 'group-19-pytest-otel-capture-otel143' and extra == 'group-19-pytest-otel-capture-otel145')" },
+    { name = "opentelemetry-api", version = "1.45.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-dev' or extra == 'group-19-pytest-otel-capture-otel145' or (extra == 'group-19-pytest-otel-capture-otel-minimum' and extra == 'group-19-pytest-otel-capture-otel143') or (extra == 'group-19-pytest-otel-capture-otel-minimum' and extra == 'group-19-pytest-otel-capture-otel144') or (extra == 'group-19-pytest-otel-capture-otel143' and extra == 'group-19-pytest-otel-capture-otel144') or (extra != 'group-19-pytest-otel-capture-otel-minimum' and extra != 'group-19-pytest-otel-capture-otel143' and extra != 'group-19-pytest-otel-capture-otel144')" },
+    { name = "opentelemetry-sdk", version = "1.43.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-otel-minimum' or extra == 'group-19-pytest-otel-capture-otel143' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel144') or (extra == 'group-19-pytest-otel-capture-otel144' and extra == 'group-19-pytest-otel-capture-otel145')" },
+    { name = "opentelemetry-sdk", version = "1.44.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-otel144' or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel-minimum') or (extra == 'group-19-pytest-otel-capture-dev' and extra == 'group-19-pytest-otel-capture-otel143') or (extra == 'group-19-pytest-otel-capture-otel-minimum' and extra == 'group-19-pytest-otel-capture-otel143') or (extra == 'group-19-pytest-otel-capture-otel-minimum' and extra == 'group-19-pytest-otel-capture-otel145') or (extra == 'group-19-pytest-otel-capture-otel143' and extra == 'group-19-pytest-otel-capture-otel145')" },
+    { name = "opentelemetry-sdk", version = "1.45.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-19-pytest-otel-capture-dev' or extra == 'group-19-pytest-otel-capture-otel145' or (extra == 'group-19-pytest-otel-capture-otel-minimum' and extra == 'group-19-pytest-otel-capture-otel143') or (extra == 'group-19-pytest-otel-capture-otel-minimum' and extra == 'group-19-pytest-otel-capture-otel144') or (extra == 'group-19-pytest-otel-capture-otel143' and extra == 'group-19-pytest-otel-capture-otel144') or (extra != 'group-19-pytest-otel-capture-otel-minimum' and extra != 'group-19-pytest-otel-capture-otel143' and extra != 'group-19-pytest-otel-capture-otel144')" },
 ]
 
 [package.dev-dependencies]
@@ -797,6 +803,36 @@ checks = [
     { name = "twine" },
 ]
 dev = [
+    { name = "basedpyright" },
+    { name = "build" },
+    { name = "editables" },
+    { name = "hatch-vcs" },
+    { name = "hatchling" },
+    { name = "opentelemetry-api", version = "1.45.2", source = { registry = "https://pypi.org/simple" } },
+    { name = "opentelemetry-instrumentation-logging", version = "0.66b2", source = { registry = "https://pypi.org/simple" } },
+    { name = "opentelemetry-sdk", version = "1.45.2", source = { registry = "https://pypi.org/simple" } },
+    { name = "packaging" },
+    { name = "pytest" },
+    { name = "pytest-xdist" },
+    { name = "ruff" },
+    { name = "twine" },
+]
+otel-minimum = [
+    { name = "basedpyright" },
+    { name = "build" },
+    { name = "editables" },
+    { name = "hatch-vcs" },
+    { name = "hatchling" },
+    { name = "opentelemetry-api", version = "1.43.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "opentelemetry-instrumentation-logging", version = "0.64b0", source = { registry = "https://pypi.org/simple" } },
+    { name = "opentelemetry-sdk", version = "1.43.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "packaging" },
+    { name = "pytest" },
+    { name = "pytest-xdist" },
+    { name = "ruff" },
+    { name = "twine" },
+]
+otel143 = [
     { name = "basedpyright" },
     { name = "build" },
     { name = "editables" },
@@ -862,6 +898,36 @@ checks = [
     { name = "twine" },
 ]
 dev = [
+    { name = "basedpyright" },
+    { name = "build" },
+    { name = "editables" },
+    { name = "hatch-vcs" },
+    { name = "hatchling" },
+    { name = "opentelemetry-api", specifier = "==1.45.2" },
+    { name = "opentelemetry-instrumentation-logging", specifier = "==0.66b2" },
+    { name = "opentelemetry-sdk", specifier = "==1.45.2" },
+    { name = "packaging" },
+    { name = "pytest", specifier = ">=9,<10" },
+    { name = "pytest-xdist" },
+    { name = "ruff" },
+    { name = "twine" },
+]
+otel-minimum = [
+    { name = "basedpyright" },
+    { name = "build" },
+    { name = "editables" },
+    { name = "hatch-vcs" },
+    { name = "hatchling" },
+    { name = "opentelemetry-api", specifier = "==1.43.0" },
+    { name = "opentelemetry-instrumentation-logging", specifier = "==0.64b0" },
+    { name = "opentelemetry-sdk", specifier = "==1.43.0" },
+    { name = "packaging" },
+    { name = "pytest", specifier = ">=9,<10" },
+    { name = "pytest-xdist" },
+    { name = "ruff" },
+    { name = "twine" },
+]
+otel143 = [
     { name = "basedpyright" },
     { name = "build" },
     { name = "editables" },
