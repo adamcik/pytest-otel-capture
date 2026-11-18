@@ -118,7 +118,7 @@
               ) (throw "Missing ${package} pin in ${group}") dependencyGroups.${group};
             in
             lib.removePrefix prefix dependency;
-          otelVersions = lib.genAttrs [ "otel-minimum" "otel143" "otel144" "otel145" ] (group: {
+          otelVersions = lib.genAttrs [ "otel-minimum" "otel-latest" ] (group: {
             inherit group;
             sdk = pinnedVersion group "opentelemetry-sdk";
             instrumentation = pinnedVersion group "opentelemetry-instrumentation-logging";

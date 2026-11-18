@@ -10,40 +10,17 @@
       "matchManagers": ["pep621"],
       "matchDepTypes": ["dependency-groups"],
       "matchPackageNames": ["/^opentelemetry-/"],
-      "matchJsonata": ["managerData.depGroup in ['dev', 'otel-minimum']"],
+      "matchJsonata": ["managerData.depGroup = 'otel-minimum'"],
       "enabled": false
     },
     {
-      "description": "Track patches in the OpenTelemetry 1.43 compatibility lane",
+      "description": "Update the latest OpenTelemetry SDK and logging instrumentation together",
       "matchManagers": ["pep621"],
+      "matchDepTypes": ["dependency-groups"],
       "matchPackageNames": ["/^opentelemetry-/"],
-      "matchJsonata": ["managerData.depGroup = 'otel143'"],
-      "allowedVersions": "/^(1\\.43\\.[0-9]+|0\\.64b[0-9]+)$/",
-      "groupName": "OpenTelemetry 1.43 compatibility"
-    },
-    {
-      "description": "Track patches in the OpenTelemetry 1.44 compatibility lane",
-      "matchManagers": ["pep621"],
-      "matchPackageNames": ["/^opentelemetry-/"],
-      "matchJsonata": ["managerData.depGroup = 'otel144'"],
-      "allowedVersions": "/^(1\\.44\\.[0-9]+|0\\.65b[0-9]+)$/",
-      "groupName": "OpenTelemetry 1.44 compatibility"
-    },
-    {
-      "description": "Track patches in the OpenTelemetry 1.45 compatibility lane",
-      "matchManagers": ["pep621"],
-      "matchPackageNames": ["/^opentelemetry-/"],
-      "matchJsonata": ["managerData.depGroup = 'otel145'"],
-      "allowedVersions": "/^(1\\.45\\.[0-9]+|0\\.66b[0-9]+)$/",
-      "groupName": "OpenTelemetry 1.45 compatibility"
-    },
-    {
-      "description": "Do not move compatibility lanes across minors, including security updates",
-      "matchManagers": ["pep621"],
-      "matchPackageNames": ["/^opentelemetry-/"],
-      "matchJsonata": ["managerData.depGroup in ['otel143', 'otel144', 'otel145']"],
-      "matchUpdateTypes": ["major", "minor"],
-      "enabled": false
+      "matchJsonata": ["managerData.depGroup = 'otel-latest'"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "OpenTelemetry latest compatibility"
     }
   ]
 }
