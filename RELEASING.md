@@ -1,40 +1,45 @@
-# Repository and PyPI setup
+# Releasing
 
-This checkout is prepared locally. GitHub provisioning, pushing, PyPI registration, and
-release publication are separate actions.
+Publishing a GitHub release triggers `.github/workflows/release.yml`, which validates,
+builds, and uploads to PyPI through trusted publishing. A draft release does not trigger
+publication. Recheck the workflow and `pypi` environment protections before each
+release; do not assume there is a later manual approval gate. PyPI releases are
+immutable.
 
-1. Set up a public repository with release-tag creation allowed and protection against
-   tag updates, deletion, and force-pushes. Keep required CI disabled until its checks
-   are verified.
+1. **Prepare.** Check live GitHub releases, PyPI versions, remote tags, and worktree
+   state. Review changes since the previous release and propose a version and full
+   commit SHA from current `origin/main`. Preserve existing work. Versions come from
+   `vVERSION` tags through hatch-vcs; no version-bump commit is needed.
+2. **Validate.** At that clean commit, run `nix fmt -- --ci`, `nix flake check`, and
+   `nix build`. Inspect candidate wheel/sdist metadata, dependency constraints, typing
+   marker, and license; rebuild the sdist and run the README example against an isolated
+   installed wheel. Read current compatibility pins from `pyproject.toml`. A
+   pretend-version candidate is preparation evidence, not an artifact to publish.
+3. **Draft.** Obtain explicit approval before creating/pushing the tag or creating the
+   GitHub draft release. Bind the tag to the approved SHA; preserve existing tags.
+   Create the release with `gh release create vVERSION --verify-tag --draft`, using
+   title `pytest-otel-capture VERSION` and the notes format below.
+4. **Review.** Inspect the draft's rendered layout and wording with the user. Describe
+   this project's changes precisely: distinguish allowed dependency ranges from tested
+   upstream versions, and attribute upstream fixes to upstream. Claim security fixes
+   only with evidence. Rebuild from the approved tag with pretend-version overrides
+   unset, inspect the artifacts, and run `scripts/check-release.py` with `RELEASE_TAG`
+   and `DIST_DIR` set. Stop on any validation failure.
+5. **Publish.** Obtain explicit approval of the current draft and its automatic PyPI
+   upload, then publish the draft. The workflow builds the tagged source again; the
+   publish job uploads those validated artifacts rather than rebuilding them. If API
+   access is denied, hand off the draft URL or exact command and notes to the user.
+6. **Verify.** Confirm the release workflow succeeds, PyPI has the expected version and
+   dependency metadata, and a fresh installation from PyPI runs the README example.
+   Report the GitHub release and PyPI links, or the exact blocker.
 
-2. Review and commit this bootstrap branch, then push and integrate it into `main`. Run
-   CI, observe the exact check context and GitHub App integration ID, and enable
-   required CI in a follow-up infrastructure change. Do not guess the ID.
-3. Create the GitHub environment `pypi` with appropriate release approval rules.
-4. In PyPI's Publishing settings, add a pending GitHub trusted publisher:
+## Release notes
 
-   | Field             | Value                 |
-   | ----------------- | --------------------- |
-   | PyPI project      | `pytest-otel-capture` |
-   | GitHub owner      | `adamcik`             |
-   | Repository        | `pytest-otel-capture` |
-   | Workflow filename | `release.yml`         |
-   | Environment       | `pypi`                |
+Use short bullets under these headings, omitting empty sections. Include only changes
+since the previous release; keep preparation logs and validation transcripts local.
 
-   Name availability is not a reservation. The first successful trusted upload creates
-   the project. No API-token secret is needed.
-5. Run `nix fmt -- --ci`, `nix flake check`, and `nix build`. Inspect wheel and sdist
-   metadata and try the README example against the installed wheel. `nix flake check`
-   includes all six compatibility checks (Python 3.12–3.14, OTel 1.43/1.44), using
-   installed packages and locked dependencies in the same way locally and in CI.
-6. Choose a version, create its `vVERSION` tag, and publish an approved GitHub release
-   for that tag. `release.yml` checks the project, builds and inspects distributions,
-   verifies their versions, and publishes through OIDC. The PyPI job does not rebuild
-   artifacts and is the only job with `id-token: write`.
-
-Versions come from Git tags via hatch-vcs. Git-free source snapshots use `0.0.0` for
-local/Nix builds; untagged Git checkouts produce development versions. The release
-workflow refuses both. PyPI releases are immutable; inspect the artifacts before
-approving.
-
-The bootstrap does not enable automerge or register a trusted publisher for you.
+- **Highlights:** user-visible additions and fixes.
+- **Compatibility:** dependency-range changes and exact upstream versions tested.
+- **Deprecations:** affected APIs and their replacements.
+- **Full changelog:** link to
+  `https://github.com/adamcik/pytest-otel-capture/compare/vPREVIOUS...vVERSION`.
